@@ -175,7 +175,7 @@ register(
     kwargs={
         'ref_min_score': HOPPER_RANDOM_SCORE,
         'ref_max_score': HOPPER_EXPERT_SCORE,
-        'dataset_url':'http://rail.eecs.berkeley.edu/datasets/offline_rl/gym_mujoco/hopper_medium_expert.hdf5'
+        'dataset_url':'http://rail.eecs.berkeley.edu/datasets/offline_rl/gym_mujoco/hopper_medium_expert_v1.hdf5'
     }
 )
 
