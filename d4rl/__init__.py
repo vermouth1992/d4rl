@@ -1,13 +1,13 @@
+import collections
 import os
 import sys
-import collections
-import numpy as np
 
-import d4rl.locomotion
-import d4rl.hand_manipulation_suite
-import d4rl.pointmaze
 import d4rl.gym_minigrid
 import d4rl.gym_mujoco
+import d4rl.hand_manipulation_suite
+import d4rl.locomotion
+import d4rl.pointmaze
+import numpy as np
 from d4rl.offline_env import set_dataset_path, get_keys
 
 SUPPRESS_MESSAGES = bool(os.environ.get('D4RL_SUPPRESS_IMPORT_ERROR', 0))
@@ -76,9 +76,9 @@ def qlearning_dataset(env, dataset=None, terminate_on_end=False, **kwargs):
         use_timeouts = True
 
     episode_step = 0
-    for i in range(N-1):
+    for i in range(N - 1):
         obs = dataset['observations'][i]
-        new_obs = dataset['observations'][i+1]
+        new_obs = dataset['observations'][i + 1]
         action = dataset['actions'][i]
         reward = dataset['rewards'][i]
         done_bool = bool(dataset['terminals'][i])
@@ -90,7 +90,7 @@ def qlearning_dataset(env, dataset=None, terminate_on_end=False, **kwargs):
         if (not terminate_on_end) and final_timestep:
             # Skip this transition and don't apply terminals on the last step of an episode
             episode_step = 0
-            continue  
+            continue
         if done_bool or final_timestep:
             episode_step = 0
 
@@ -100,6 +100,15 @@ def qlearning_dataset(env, dataset=None, terminate_on_end=False, **kwargs):
         reward_.append(reward)
         done_.append(done_bool)
         episode_step += 1
+
+    # process last transition to ensure dataset coherency
+    if dataset['terminals'][N - 1]:
+        obs_.append(dataset['observations'][N - 1])
+        # we don't care about next obs
+        next_obs_.append(np.zeros_like(dataset['observations'][N - 1]))
+        action_.append(dataset['actions'][N - 1])
+        reward_.append(dataset['rewards'][N - 1])
+        done_.append(dataset['terminals'][N - 1])
 
     return {
         'observations': np.array(obs_),
@@ -158,4 +167,3 @@ def sequence_dataset(env, dataset=None, **kwargs):
         for k in dataset:
             data_[k].append(dataset[k][i])
         episode_step += 1
-
